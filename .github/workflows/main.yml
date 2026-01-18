@@ -1,0 +1,25 @@
+name: terraform
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init
+        run: terraform init
+
+      - name: Linting
+        run: terraform fmt -recursive -check
+
+      - name: Validate
+        run: terraform validate
