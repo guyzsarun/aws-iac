@@ -1,0 +1,35 @@
+---
+- name: Install Backend on EC2 instances
+  hosts: backend
+  become: yes
+  tasks:
+    - name: Install PHP components
+      yum:
+        name:
+          - php-mysqli
+          - php
+          - php-xml
+          - php-mbstring
+          - php-cli
+          - mariadb105
+          - httpd
+          - tcpdump
+          - emacs
+
+    - name: Render index.php
+      template:
+        src: templates/index.php.j2
+        dest: /var/www/html/index.php
+        mode: '0644'
+
+    - name: Copy static website files
+      ansible.builtin.copy:
+        src: templates/
+        dest: /var/www/html/
+        mode: '0644'
+
+    - name: Enable and start httpd service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
