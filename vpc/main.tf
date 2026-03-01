@@ -173,9 +173,9 @@ resource "aws_security_group" "public" {
   }
 
   ingress {
-    description     = "HTTP from ALB"
-    from_port       = 80
-    to_port         = 80
+    description     = "Application port from ALB"
+    from_port       = 8080
+    to_port         = 8080
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
@@ -276,7 +276,7 @@ resource "aws_lb" "main" {
 
 resource "aws_lb_target_group" "public" {
   name     = "${var.project_name}-tg"
-  port     = 80
+  port     = 8080
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
@@ -309,7 +309,7 @@ resource "aws_lb_listener" "http" {
 resource "aws_lb_target_group_attachment" "public" {
   target_group_arn = aws_lb_target_group.public.arn
   target_id        = aws_instance.public.id
-  port             = 80
+  port             = 8080
 }
 
 resource "aws_instance" "public" {
