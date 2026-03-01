@@ -28,6 +28,21 @@ output "public_instance_private_ip" {
   value       = aws_instance.public.private_ip
 }
 
+output "bastion_instance_id" {
+  description = "ID of the bastion host instance"
+  value       = aws_instance.bastion.id
+}
+
+output "bastion_instance_public_ip" {
+  description = "Public IP of the bastion host instance"
+  value       = aws_instance.bastion.public_ip
+}
+
+output "bastion_instance_private_ip" {
+  description = "Private IP of the bastion host instance"
+  value       = aws_instance.bastion.private_ip
+}
+
 output "private_instance_id" {
   description = "ID of the private EC2 instance"
   value       = aws_instance.private.id
@@ -41,6 +56,11 @@ output "private_instance_private_ip" {
 output "public_security_group_id" {
   description = "ID of the public security group"
   value       = aws_security_group.public.id
+}
+
+output "bastion_security_group_id" {
+  description = "ID of the bastion host security group"
+  value       = aws_security_group.bastion.id
 }
 
 output "private_security_group_id" {

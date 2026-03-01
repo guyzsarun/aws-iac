@@ -1,3 +1,18 @@
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.10.20260105.0-kernel-6.1-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
@@ -120,6 +135,32 @@ resource "aws_security_group" "public" {
   }
 }
 
+resource "aws_security_group" "bastion" {
+  name        = "${var.project_name}-bastion-sg"
+  description = "Security group for bastion host"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "SSH from anywhere"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-bastion-sg"
+  }
+}
+
 resource "aws_security_group" "private" {
   name        = "${var.project_name}-private-sg"
   description = "Security group for private EC2 instance"
@@ -131,6 +172,14 @@ resource "aws_security_group" "private" {
     to_port         = 3306
     protocol        = "tcp"
     cidr_blocks     = [var.public_subnet_cidr]
+  }
+
+  ingress {
+    description     = "SSH from bastion host"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]
   }
 
   egress {
@@ -156,7 +205,7 @@ resource "aws_key_pair" "main" {
 }
 
 resource "aws_instance" "public" {
-  ami                    = var.ami_id
+  ami                    = data.aws_ami.al2023.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.public.id]
@@ -167,8 +216,20 @@ resource "aws_instance" "public" {
   }
 }
 
+resource "aws_instance" "bastion" {
+  ami                    = data.aws_ami.al2023.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.bastion.id]
+  key_name               = var.ssh_public_key != "" ? aws_key_pair.main.key_name : null
+
+  tags = {
+    Name = "${var.project_name}-bastion-host"
+  }
+}
+
 resource "aws_instance" "private" {
-  ami                    = var.ami_id
+  ami                    = data.aws_ami.al2023.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.private.id
   vpc_security_group_ids = [aws_security_group.private.id]
