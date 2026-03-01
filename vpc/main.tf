@@ -165,10 +165,10 @@ resource "aws_security_group" "public" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "SSH from bastion host"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    description     = "SSH from bastion host"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.bastion.id]
   }
 
@@ -225,11 +225,11 @@ resource "aws_security_group" "private" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description     = "MySQL from public subnet"
-    from_port       = 3306
-    to_port         = 3306
-    protocol        = "tcp"
-    cidr_blocks     = [var.public_subnet_cidr]
+    description = "MySQL from public subnet"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [var.public_subnet_cidr]
   }
 
   ingress {
