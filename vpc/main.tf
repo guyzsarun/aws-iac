@@ -146,12 +146,21 @@ resource "aws_security_group" "private" {
   }
 }
 
+resource "aws_key_pair" "main" {
+  key_name   = "${var.project_name}-key"
+  public_key = var.ssh_public_key
+
+  tags = {
+    Name = "${var.project_name}-key-pair"
+  }
+}
+
 resource "aws_instance" "public" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.public.id]
-  key_name               = var.key_name != "" ? var.key_name : null
+  key_name               = var.ssh_public_key != "" ? aws_key_pair.main.key_name : null
 
   tags = {
     Name = "${var.project_name}-public-instance"
@@ -163,7 +172,7 @@ resource "aws_instance" "private" {
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.private.id
   vpc_security_group_ids = [aws_security_group.private.id]
-  key_name               = var.key_name != "" ? var.key_name : null
+  key_name               = var.ssh_public_key != "" ? aws_key_pair.main.key_name : null
 
   tags = {
     Name = "${var.project_name}-private-instance"

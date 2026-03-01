@@ -40,8 +40,8 @@ variable "ami_id" {
   default     = "ami-0c55b159cbfafe1f0"
 }
 
-variable "key_name" {
-  description = "SSH key pair name"
+variable "ssh_public_key" {
+  description = "SSH public key content (e.g., ssh-rsa AAAAB3...)"
   type        = string
   default     = ""
 }
@@ -50,4 +50,10 @@ variable "project_name" {
   description = "Project name for resource tagging"
   type        = string
   default     = "vpc-project"
+}
+
+variable "aws_profile" {
+  description = "AWS CLI profile to use"
+  type        = string
+  default     = "default"
 }
