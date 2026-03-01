@@ -1,14 +1,8 @@
 ---
 - name: Install Docker and Docker Compose on Public Instance
-  hosts: public
+  hosts: application
   become: yes
   tasks:
-    - name: Update all packages
-      yum:
-        name: '*'
-        state: latest
-        update_cache: yes
-
     - name: Install Docker
       yum:
         name: docker
