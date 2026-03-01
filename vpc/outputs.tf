@@ -4,8 +4,13 @@ output "vpc_id" {
 }
 
 output "public_subnet_id" {
-  description = "ID of the public subnet"
+  description = "ID of the public subnet 1"
   value       = aws_subnet.public.id
+}
+
+output "public_subnet_2_id" {
+  description = "ID of the public subnet 2"
+  value       = aws_subnet.public_2.id
 }
 
 output "private_subnet_id" {
@@ -56,6 +61,21 @@ output "private_instance_private_ip" {
 output "public_security_group_id" {
   description = "ID of the public security group"
   value       = aws_security_group.public.id
+}
+
+output "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer"
+  value       = aws_lb.main.dns_name
+}
+
+output "alb_arn" {
+  description = "ARN of the Application Load Balancer"
+  value       = aws_lb.main.arn
+}
+
+output "alb_security_group_id" {
+  description = "ID of the ALB security group"
+  value       = aws_security_group.alb.id
 }
 
 output "bastion_security_group_id" {
