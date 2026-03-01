@@ -318,7 +318,7 @@ resource "aws_instance" "public" {
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.public.id]
   key_name                    = var.ssh_public_key != "" ? aws_key_pair.main.key_name : null
-  associate_public_ip_address = false
+  associate_public_ip_address = true
 
   tags = {
     Name = "${var.project_name}-public-instance"
